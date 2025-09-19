@@ -4,13 +4,13 @@ on:
   pull_request:
     branches:
       - main
+      - stg
       - dev
-      - 'feature/**'
   push:
     branches:
       - main
+      - stg
       - dev
-      - 'feature/**'
 
 jobs:
   build-and-test:
@@ -73,13 +73,13 @@ jobs:
       - name: Deploy to Development server
         if: github.ref == 'refs/heads/dev'
         run: |
-          echo "배포: Development 서버"
+          echo "배포: Develop 서버"
           ssh ${{ secrets.DEV_SERVER_USER }}@${{ secrets.DEV_SERVER_HOST }} "cd /app && ./deploy-dev.sh"
 
       - name: Deploy to Feature server
         if: startsWith(github.ref, 'refs/heads/feature/')
         run: |
-          echo "배포: Feature 서버"
+          echo "배포: staging 서버"
           ssh ${{ secrets.FEATURE_SERVER_USER }}@${{ secrets.FEATURE_SERVER_HOST }} "cd /app && ./deploy-feature.sh"
 
       - name: Deploy to Production server
