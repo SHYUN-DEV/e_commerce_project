@@ -1,15 +1,11 @@
 package com.example.newecommerce.user.controller;
 
-import com.example.newecommerce.common.exception.BusinessException;
-import com.example.newecommerce.common.exception.ErrorCode;
+
 import com.example.newecommerce.order.application.OrderService;
-import com.example.newecommerce.order.domain.Order;
-import com.example.newecommerce.order.domain.OrderDetail;
-import com.example.newecommerce.order.domain.OrderRepository;
-import com.example.newecommerce.product.domain.Product;
+
 import com.example.newecommerce.product.domain.ProductRepository;
 import com.example.newecommerce.user.application.UserServiceImpl;
-import com.example.newecommerce.user.domain.Point;
+
 import com.example.newecommerce.user.domain.User;
 import com.example.newecommerce.user.domain.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -17,14 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.*;
+
 import java.util.concurrent.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+
 
 @SpringBootTest
 public class UserServiceIntegrationTest {
@@ -78,8 +71,6 @@ public class UserServiceIntegrationTest {
         assertFalse(first && second);
 
 
-
-
         // 최종 포인트 확인
         User afterUpdateUser = userRepository.findByUserId(userId);
 
@@ -88,7 +79,7 @@ public class UserServiceIntegrationTest {
 
 
 
-    };
+    }
 
     private boolean getOrFalse(Future<Boolean> f) throws InterruptedException {
         try {
@@ -209,7 +200,7 @@ public class UserServiceIntegrationTest {
 
 
 
-    };
+    }
 
 
 
