@@ -7,6 +7,7 @@ import com.example.newecommerce.user.domain.PointHistory;
 import com.example.newecommerce.user.domain.User;
 import com.example.newecommerce.user.domain.UserRepositoryCustom;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
@@ -35,17 +36,22 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public int updatePoint(long userId, int additionalPoints) {
-       int rst = em.createQuery("UPDATE Point p SET p.point = :additionalPoints WHERE p.user.userId = :userId")
-                .setParameter("userId", userId)
-                .setParameter("additionalPoints", additionalPoints)
-                .executeUpdate();
 
+        Point point = em.createQuery("select p from Point p join p.user u where u.userId = :userId", Point.class)
+                                    .setParameter("userId", userId)
+                                    //.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                                    .getSingleResult();
 
+        if (point == null) {
+            return 0;
+        }
 
+        point.setPoint(additionalPoints);
+
+        return 1;
 
         //UPDATE point p JOIN user u ON p.userId = u.userId SET p.point = theFinalPoint WHERE u.userId = userId;
 
-       return rst;
     }
 
     //포인트 변경 내역 작성

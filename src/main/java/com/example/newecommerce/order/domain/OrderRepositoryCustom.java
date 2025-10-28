@@ -21,4 +21,6 @@ public interface OrderRepositoryCustom {
     public Order getOrderInfo(long userId, long orderId);
 
     public void updatePayment(Long orderId, int totalPayPoint, EnumPaymentMethod enumPaymentMethod);
+
+
 }

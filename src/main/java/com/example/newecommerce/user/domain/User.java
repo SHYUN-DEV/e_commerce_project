@@ -41,7 +41,9 @@ public class User {
     public User(long userId, String userName, Point point) {
         this.userId = userId;
         this.userName = userName;
-        this.point = point;
+        if(point != null) {
+            addPoint(point);
+        }
     }
 
     public void addPoint(Point point) {

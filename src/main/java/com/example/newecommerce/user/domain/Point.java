@@ -30,7 +30,7 @@ public class Point {
     private int point;
 
     @Version
-    private int version;
+    private long version;
 
     @OneToMany(mappedBy = "point")
     private List<PointHistory> pointHistoryList = new ArrayList<>();
@@ -38,6 +38,11 @@ public class Point {
 
     public Point(int finalPoint) {
 
+        this.point = finalPoint;
+    }
+
+    public Point(Long pointId, int finalPoint) {
+        this.pointId = pointId;
         this.point = finalPoint;
     }
 }

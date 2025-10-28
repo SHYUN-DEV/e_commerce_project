@@ -11,7 +11,9 @@ import com.example.newecommerce.user.dto.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,16 +30,22 @@ public class UserServiceImpl implements UserService {
 
     }
 
+
+    @Transactional
+    @Override
+    public boolean chargePointWithRetry(long userId, int point) {
+
+        return false;
+    }
+
+
     @Transactional
     @Override
     public boolean chargePoint(long userId, int point) {
 
-        //계정 정보 조회(아이디, 이름, 현재포인트)
-        User user = userRepository.findByUserId(userId);
-
-
-
         try {
+            //계정 정보 조회(아이디, 이름, 현재포인트)
+            User user = userRepository.findByUserId(userId);
             //if문 - 계정이 있으면 충전, 업데이트 포인트 테이블, 포인트 이력테이블
             if (user != null) {
                 Long pointId = user.getPoint().getPointId();
@@ -45,17 +53,76 @@ public class UserServiceImpl implements UserService {
                 int additionalPoints = user.getPoint().getPoint() + point;
                 userRepository.updatePoint(userId, additionalPoints);
                 userRepository.updatePointHistory(pointId, EnumPointStatus.CHARGED, point, additionalPoints);
+
                 return true;
             }else  {
                 //else - 없으면 false 반환 혹은 계정없음 커스텀 에러발생
-                throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+                //throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+                return false;
             }
 
-                    //동시성제어 낙관적락 에러
+
         }catch (ObjectOptimisticLockingFailureException e) {
 
             System.out.println("중복 충전 발생"+ e.getMessage());
 
+            return false;
+        }
+
+
+    }
+
+    @Transactional
+    @Override
+    public boolean usePointWithRetry(long userId, int point) {
+//        int maxRetries = 3;
+//        int attempt = 0;
+//
+//        while (true) {
+//            try {
+//                attempt++;
+//                usePoint(userId, point); // 포인트 사용
+//
+//                return true; // 성공 시 true 반환
+//            } catch (ObjectOptimisticLockingFailureException e) {
+//
+//                if (attempt >= maxRetries) {
+//                  // TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+//                    return false; // 재시도 횟수 초과 → 실패로 false 반환
+//
+//
+//                }
+//
+//                // 충돌 완화: 잠시 대기 후 재시도
+//                try {
+//                    Thread.sleep(100);
+//                } catch (InterruptedException ignored) {}
+//            }
+//        }
+        return false;
+    }
+
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public boolean usePoint(long userId, int point) {
+
+        try {
+            User user = userRepository.findByUserId(userId);
+            if (user != null) {
+                Long pointId = user.getPoint().getPointId();
+                int additionalPoints = user.getPoint().getPoint() - point;
+                userRepository.updatePoint(userId, additionalPoints);
+                userRepository.updatePointHistory(pointId, EnumPointStatus.USED, point, additionalPoints);
+            }else {
+                //throw new BusinessException(ErrorCode.USER_NOT_FOUND)
+                return false;
+            }
+
+            return true;
+        }catch (ObjectOptimisticLockingFailureException e) {
+
+            System.out.println("중복 사용 발생"+ e.getMessage());
             return false;
         }
 

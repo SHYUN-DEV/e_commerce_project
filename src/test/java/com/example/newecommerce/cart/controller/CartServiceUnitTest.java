@@ -2,7 +2,6 @@ package com.example.newecommerce.cart.controller;
 
 import com.example.newecommerce.cart.application.CartServiceImpl;
 import com.example.newecommerce.cart.domain.CartRepository;
-import com.example.newecommerce.cart.dto.CartResponse;
 import com.example.newecommerce.common.exception.BusinessException;
 import com.example.newecommerce.common.exception.ErrorCode;
 import com.example.newecommerce.product.domain.Product;
@@ -10,14 +9,12 @@ import com.example.newecommerce.product.domain.ProductRepository;
 import com.example.newecommerce.user.domain.Point;
 import com.example.newecommerce.user.domain.User;
 import com.example.newecommerce.user.domain.UserRepository;
-import org.hibernate.usertype.BaseUserTypeSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CartControllerTest {
+class CartServiceUnitTest {
 
     /*
     실패 테스트 코드란 --- 예외상황 이나 실패 상황(시나리오)이 올바르게 처리가 되었는지 확인하는 테스트코드

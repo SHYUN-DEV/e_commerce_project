@@ -60,20 +60,24 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
     @Override
     public void updateOrderStatus(long userId, long orderId, EnumOrderStatus orderStatus) {
-        em.createQuery("update Order o set o.orderDate = current_timestamp , o.orderStatus = :status " +
-                        "where o.user.userId = :userId and o.orderId = :orderId")
-                .setParameter("status", orderStatus)
-                .setParameter("userId", userId)
-                .setParameter("orderId", orderId)
-                .executeUpdate();
 
-        em.createQuery("update OrderDetail od set od.orderDetailDate = current_timestamp, od.orderDetailStatus = :status " +
-                        "where od.order.user.userId = :userId and od.order.orderId = :orderId")
-                .setParameter("status", orderStatus)
-                .setParameter("userId", userId)
-                .setParameter("orderId", orderId)
-                .executeUpdate();
+         Order order = em.createQuery("select o from Order o join fetch o.orderDetailList od " +
+                                                "where o.orderId = :orderId and o.user.userId = :userId ", Order.class)
+                                                .setParameter("userId", userId)
+                                                .setParameter("orderId", orderId)
+                                                .getSingleResult();
 
+
+        order.setOrderDate(LocalDateTime.now());
+        order.setOrderStatus(orderStatus);
+
+         for(OrderDetail od: order.getOrderDetailList()) {
+
+             od.setOrderDetailDate(LocalDateTime.now());
+             od.setOrderDetailStatus(orderStatus);
+
+
+         }
 
 
 
@@ -90,6 +94,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
          */
 
     }
+
+
 
     @Override
     public boolean saveOrder(long userId, int totalPayPrice, EnumOrderStatus enumOrderStatus) {

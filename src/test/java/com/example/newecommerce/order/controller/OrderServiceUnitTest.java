@@ -2,7 +2,6 @@ package com.example.newecommerce.order.controller;
 
 import com.example.newecommerce.common.exception.BusinessException;
 import com.example.newecommerce.common.exception.ErrorCode;
-import com.example.newecommerce.order.application.OrderService;
 import com.example.newecommerce.order.application.OrderServiceImpl;
 import com.example.newecommerce.order.domain.Order;
 import com.example.newecommerce.order.domain.OrderDetail;
@@ -32,10 +31,12 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.never;
 
 @ExtendWith(MockitoExtension.class)
-class OrderControllerTest {
+class OrderServiceUnitTest {
 
     /*
     실패 테스트 코드 - 예외 상황이아 실패상황이 올르바게 처리 되는 확인 하는 테스트 코드
+
+    재고 차감 부분 동시성제어 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
 
     주문
     실패 - 계정정보없음

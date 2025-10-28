@@ -18,7 +18,16 @@ import java.util.Map;
 public interface UserService {
 
 
+    public boolean chargePointWithRetry(long userId, int point);
+
+
     public boolean chargePoint(long userId, int point);
+
+
+    public boolean usePointWithRetry(long userId, int point);
+
+
+    public boolean usePoint(long userId, int point);
 
 
     public UserResponse PointInquiry(long userId);

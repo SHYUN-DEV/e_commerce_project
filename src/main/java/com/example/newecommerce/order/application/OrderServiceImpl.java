@@ -13,6 +13,7 @@ import com.example.newecommerce.order.domain.OrderDetail;
 import com.example.newecommerce.order.domain.OrderRepository;
 import com.example.newecommerce.product.domain.Product;
 import com.example.newecommerce.product.domain.ProductRepository;
+import com.example.newecommerce.user.application.UserService;
 import com.example.newecommerce.user.domain.User;
 import com.example.newecommerce.user.domain.UserRepository;
 
@@ -34,11 +35,15 @@ public class OrderServiceImpl implements OrderService{
     public final ProductRepository productRepository;
     public final UserRepository userRepository;
 
+    public final UserService userService;
+
     @Autowired
-    public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository){
+    public OrderServiceImpl(OrderRepository orderRepository, ProductRepository productRepository, UserRepository userRepository, UserService userService){
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+
+        this.userService = userService;
     }
 
 
@@ -206,7 +211,8 @@ public class OrderServiceImpl implements OrderService{
 
                 int updateInventory = product.getInventory() - requestQty;
 
-                //차감로직
+                //재고 차감로직
+                //비관적락 - 배타락 적용
                 int rst = productRepository.decreaseInventory(product.getProductId() ,updateInventory);
                 if(rst == 0){
                     throw new BusinessException(ErrorCode.UNEXPECTED_ERROR);
@@ -223,9 +229,14 @@ public class OrderServiceImpl implements OrderService{
         int remainPoint = user.getPoint().getPoint() - totalPayPoint;
 
         if(remainPoint >= 0) {
-            userRepository.updatePoint(userId, remainPoint);
-            userRepository.updatePointHistory(userId, EnumPointStatus.USED, totalPayPoint, remainPoint);
+            /// ///////////////업데이트 수정 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //동시성제어 - 포인트차감 - 비관적 - 배타락
+
+            userService.usePoint(userId, totalPayPoint);
+//            userRepository.updatePoint(userId, remainPoint);
+//            userRepository.updatePointHistory(user.getPoint().getPointId(), EnumPointStatus.USED, totalPayPoint, remainPoint);
             //주문상세,주문 테이블 상태시간 업데이트
+            //pending일때만 없데이트하게 수정 해야 합니다
             orderRepository.updateOrderStatus(userId, orderId, EnumOrderStatus.COMPLETED);
             //결제테이블 없데이트
             orderRepository.updatePayment(orderId, totalPayPoint, EnumPaymentMethod.POINT);

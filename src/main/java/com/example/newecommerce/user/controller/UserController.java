@@ -30,6 +30,7 @@ public class UserController {
 
 
         return userService.chargePoint(userId ,point);
+
     };
 
 

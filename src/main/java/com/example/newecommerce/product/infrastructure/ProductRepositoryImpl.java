@@ -4,6 +4,7 @@ package com.example.newecommerce.product.infrastructure;
 import com.example.newecommerce.product.domain.Product;
 import com.example.newecommerce.product.domain.ProductRepositoryCustom;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 
@@ -96,13 +97,16 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
     @Override
     public int decreaseInventory(Long productId, int updateInventory) {
 
-        int rst = em.createQuery("update Product p set p.inventory = :updateInventory " +
-                        "where p.productId = :prodcutId")
-                .setParameter("updateInventory", updateInventory)
-                .setParameter("prodcutId", productId)
-                .executeUpdate();
+        Product product = em.find(Product.class, productId, LockModeType.PESSIMISTIC_WRITE);
 
-        return rst;
+        if (product == null) {
+            return 0; // 상품 없음
+        }
+
+        product.setInventory(updateInventory);
+
+
+        return 1;
 
 
         /*

@@ -4,7 +4,6 @@ import com.example.newecommerce.common.exception.BusinessException;
 import com.example.newecommerce.product.application.ProductServiceImpl;
 
 import com.example.newecommerce.product.domain.ProductRepository;
-import com.example.newecommerce.user.domain.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ProductControllerTest {
+class ProductServiceUnitTest {
 
     /*
     실패 테스트 코드 - 예외 상황이아 실패상황이 올르바게 처리 되는 확인 하는 테스트 코드
