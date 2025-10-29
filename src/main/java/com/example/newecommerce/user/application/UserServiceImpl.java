@@ -62,6 +62,8 @@ public class UserServiceImpl implements UserService {
             }
 
 
+
+
         }catch (ObjectOptimisticLockingFailureException e) {
 
             System.out.println("중복 충전 발생"+ e.getMessage());
