@@ -1,6 +1,7 @@
 package com.example.newecommerce.product.application;
 
 
+import com.example.newecommerce.order.domain.Order;
 import com.example.newecommerce.product.domain.Product;
 import com.example.newecommerce.product.dto.ProductResponse;
 
@@ -14,6 +15,7 @@ public interface ProductService {
 
    public List<ProductResponse> inquiryBestProduct();
 
+   public boolean productStockDeduct(Order orderInfo, List<Long> productIdList);
 
 
 }

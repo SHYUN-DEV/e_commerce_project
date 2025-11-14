@@ -14,4 +14,5 @@ public interface UserRepositoryCustom {
 
     public List<PointHistory> PointHistoryInquiry(long pointId);
 
+    public Point setPoint(long userId);
 }

@@ -24,29 +24,38 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     @Override
     public User findByUserId(long userId) {
         //유저고유번호를 파라미터로 user테이블과 point테이블을 조인해서 데이터를 가져온다
-        User user = em.createQuery(
-                    "select u from User u join fetch u.point p where u.userId = :userId", User.class)
+        List<User> user = em.createQuery(
+                    "select u from User u left join fetch u.point p where u.userId = :userId", User.class)
                     .setParameter("userId", userId)
-                    .getSingleResult();
+                    .getResultList();
 
        // SELECT * FROM user u JOIN point p ON u.userId = p.userId
 
-        return user;
+        return user.isEmpty()? null : user.get(0) ;
     }
 
     @Override
     public int updatePoint(long userId, int additionalPoints) {
 
-        Point point = em.createQuery("select p from Point p join p.user u where u.userId = :userId", Point.class)
+        List<Point> point = em.createQuery("select p from Point p join p.user u where u.userId = :userId", Point.class)
                                     .setParameter("userId", userId)
                                     //.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-                                    .getSingleResult();
+                                    .getResultList();
 
-        if (point == null) {
+        //데이터가 없으면 새로 insert
+        if (point.isEmpty()) {
+            Point pointInfo = new Point();
+            User userRef = em.getReference(User.class, userId);
+
+            pointInfo.setUser(userRef);
+            pointInfo.setPoint(additionalPoints);
+
+            em.persist(pointInfo);
+
             return 0;
         }
 
-        point.setPoint(additionalPoints);
+        point.get(0).setPoint(additionalPoints);
 
         return 1;
 
@@ -116,6 +125,19 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         */
     }
 
+    @Override
+    public Point setPoint(long userId) {
+
+        Point point = new Point();
+        User userRef = em.getReference(User.class, userId);
+
+        point.setUser(userRef);
+        point.setPoint(0);
+
+        em.persist(point);
+
+        return point;
+    }
 
 
 }

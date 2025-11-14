@@ -46,6 +46,16 @@ public class UserServiceIntegrationTest {
     }
 
 
+    private boolean getOrFalse(Future<Boolean> f) throws InterruptedException {
+        try {
+            return f.get(); // 정상 성공
+        } catch (ExecutionException e) {
+            return false;
+        }
+    }
+
+
+
     @Test
     @DisplayName("포인트 충전 - 실패 - 중복요청")
     void chargeTestFailDuplicationRequest() throws ExecutionException, InterruptedException {
@@ -81,14 +91,6 @@ public class UserServiceIntegrationTest {
 
     }
 
-    private boolean getOrFalse(Future<Boolean> f) throws InterruptedException {
-        try {
-            return f.get(); // 정상 성공
-        } catch (ExecutionException e) {
-            // 낙관적락 충돌 등 내부 예외는 실패(false)로 간주
-            return false;
-        }
-    }
 
 
     @Test

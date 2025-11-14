@@ -3,11 +3,13 @@ package com.example.newecommerce.user.application;
 import com.example.newecommerce.common.enums.EnumPointStatus;
 import com.example.newecommerce.common.exception.BusinessException;
 import com.example.newecommerce.common.exception.ErrorCode;
+import com.example.newecommerce.user.domain.Point;
 import com.example.newecommerce.user.domain.PointHistory;
 import com.example.newecommerce.user.domain.User;
 import com.example.newecommerce.user.domain.UserRepository;
 import com.example.newecommerce.user.dto.PointHistoryResponse;
 import com.example.newecommerce.user.dto.UserResponse;
+import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -46,11 +48,16 @@ public class UserServiceImpl implements UserService {
         try {
             //계정 정보 조회(아이디, 이름, 현재포인트)
             User user = userRepository.findByUserId(userId);
-            //if문 - 계정이 있으면 충전, 업데이트 포인트 테이블, 포인트 이력테이블
-            if (user != null) {
-                Long pointId = user.getPoint().getPointId();
 
-                int additionalPoints = user.getPoint().getPoint() + point;
+
+
+            //if문 - 계정이 있으면 충전, 업데이트 포인트 테이블, 포인트 이력테이블
+            if (user != null && user.getPoint() == null) {
+                Point newPoint = userRepository.setPoint(userId);
+
+                Long pointId = newPoint.getPointId();
+
+                int additionalPoints = newPoint.getPoint() + point;
                 userRepository.updatePoint(userId, additionalPoints);
                 userRepository.updatePointHistory(pointId, EnumPointStatus.CHARGED, point, additionalPoints);
 
@@ -58,6 +65,7 @@ public class UserServiceImpl implements UserService {
             }else  {
                 //else - 없으면 false 반환 혹은 계정없음 커스텀 에러발생
                 //throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+
                 return false;
             }
 
