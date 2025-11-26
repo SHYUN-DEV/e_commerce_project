@@ -8,7 +8,7 @@ public interface UserRepositoryCustom {
 
     public User findByUserId(long userId);
 
-    public int updatePoint(long userId, int theFinalPoint);
+    public Point updatePoint(long userId, int theFinalPoint);
 
     public int updatePointHistory(long pointId, EnumPointStatus enumPointStatus, int changePoint, int theFinalPoint);
 

@@ -2,6 +2,7 @@ package com.example.newecommerce.user.controller;
 
 import com.example.newecommerce.user.application.UserService;
 import com.example.newecommerce.user.dto.PointHistoryResponse;
+import com.example.newecommerce.user.dto.PointResponse;
 import com.example.newecommerce.user.dto.UserResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,6 +14,7 @@ import java.util.List;
 
 @Tag(name = "유저", description = "사용자 관련 기능")
 @RestController
+@RequestMapping(name = "/point")
 public class UserController {
 
     public final UserService userService;
@@ -25,8 +27,8 @@ public class UserController {
 
     //포인트 충전
     @Operation(summary = "유저/포인트 충전", description = "유저의 포인트를 충전합니다")
-    @PatchMapping("point/{id}/charge")
-    public boolean charge(@PathVariable("id") Long userId, @RequestBody int point) {
+    @PatchMapping("/{id}/charge")
+    public PointResponse charge(@PathVariable("id") Long userId, @RequestBody int point) {
 
 
         return userService.chargePoint(userId ,point);
@@ -37,7 +39,7 @@ public class UserController {
 
     //포인트 조회
     @Operation(summary = "유저/포인트 조회", description = "유저의 포인트를 조회합니다")
-    @GetMapping("point/{id}")
+    @GetMapping("/{id}/inquiry")
     public UserResponse pointInquiry(@PathVariable("id") Long userId) {
 
 
@@ -47,7 +49,7 @@ public class UserController {
 
     //포인트 내역 조회
     @Operation(summary = "유저/포인트 내역 조회", description = "포인트 내역을 조회합니다")
-    @GetMapping("point/{id}/histories")
+    @GetMapping("/{id}/histories")
     public List<PointHistoryResponse> historiesInquiry(@PathVariable("id") Long userId) {
 
 

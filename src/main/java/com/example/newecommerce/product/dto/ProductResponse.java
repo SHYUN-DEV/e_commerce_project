@@ -20,4 +20,5 @@ public class ProductResponse {
     private int inventory;
 
 
+
 }

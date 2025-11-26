@@ -35,11 +35,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public int updatePoint(long userId, int additionalPoints) {
+    public Point updatePoint(long userId, int additionalPoints) {
 
         List<Point> point = em.createQuery("select p from Point p join p.user u where u.userId = :userId", Point.class)
                                     .setParameter("userId", userId)
-                                    //.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                                    .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                                     .getResultList();
 
         //데이터가 없으면 새로 insert
@@ -52,12 +52,13 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
             em.persist(pointInfo);
 
-            return 0;
+            return pointInfo;
         }
 
         point.get(0).setPoint(additionalPoints);
 
-        return 1;
+        //return 1;
+        return point.isEmpty()? null : point.get(0);
 
         //UPDATE point p JOIN user u ON p.userId = u.userId SET p.point = theFinalPoint WHERE u.userId = userId;
 

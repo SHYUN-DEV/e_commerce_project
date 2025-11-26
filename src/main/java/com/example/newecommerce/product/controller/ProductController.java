@@ -14,6 +14,7 @@ import java.util.Map;
 
 @Tag(name = "상품", description = "상품 관련 기능")
 @RestController
+@RequestMapping(name = "/product")
 public class ProductController {
 
     public final ProductService productService;
@@ -25,7 +26,7 @@ public class ProductController {
 
 
     @Operation(summary = "상품/상품 조회", description = "상품을 조회합니다")
-    @GetMapping("/product")
+    @GetMapping("/inquiry")
     public List<ProductResponse> getProducts(@RequestParam List<Long> productIdList) {
 
         return productService.inquiryProduct(productIdList);

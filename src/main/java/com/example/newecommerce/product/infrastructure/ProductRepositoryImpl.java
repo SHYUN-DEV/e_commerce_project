@@ -38,33 +38,33 @@ public class ProductRepositoryImpl implements ProductRepositoryCustom {
 
 
 
-        //SELECT
-        //    od.product_id,
-        //    od.product_name,
-        //    SUM(od.quantity) AS total_quantity
-        //RANK() OVER (ORDER BY SUM(od.quantity) DESC) AS ranking
-        //FROM order_detail od
-        //JOIN `order` o ON od.order_id = o.order_id
-        //WHERE o.order_status = 'success'
-        //GROUP BY od.product_id, od.product_name
-        //ORDER BY total_quantity DESC, product_id ASC
-        //LIMIT 5;
-
-
+//        SELECT
+//            od.product_id,
+//            od.product_name,
+//            SUM(od.quantity) AS total_sales,
+//        RANK() OVER (ORDER BY SUM(od.quantity) DESC) AS ranking
+//        FROM order_detail od
+//        JOIN orders o ON od.order_id = o.order_id
+//        WHERE o.order_status = 'success'
+//        GROUP BY od.product_id, od.product_name
+//        ORDER BY total_sales DESC, product_id ASC
+//        LIMIT 5;
+//
+//
 //        SELECT product_id, product_name, total_quantity
 //        FROM (
 //                SELECT
 //                od.product_id,
 //                od.product_name,
-//                SUM(od.quantity) AS total_quantity,
+//                SUM(od.quantity) AS total_sales,
 //                RANK() OVER (ORDER BY SUM(od.quantity) DESC) AS ranking
 //                FROM order_detail od
-//                JOIN `order` o ON od.order_id = o.order_id
+//                JOIN orders o ON od.order_id = o.order_id
 //                WHERE o.order_status = 'success'
 //                GROUP BY od.product_id, od.product_name
 //        ) AS ranked
 //        WHERE ranking <= 5
-//        ORDER BY total_quantity DESC;
+//        ORDER BY total_sales DESC;
 
         return bestProductList;
     }

@@ -7,6 +7,7 @@ import com.example.newecommerce.user.domain.User;
 import com.example.newecommerce.user.domain.PointHistory;
 import com.example.newecommerce.user.domain.UserRepository;
 import com.example.newecommerce.user.dto.PointHistoryResponse;
+import com.example.newecommerce.user.dto.PointResponse;
 import com.example.newecommerce.user.dto.UserResponse;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
@@ -18,13 +19,7 @@ import java.util.Map;
 public interface UserService {
 
 
-    public boolean chargePointWithRetry(long userId, int point);
-
-
-    public boolean chargePoint(long userId, int point);
-
-
-    public boolean usePointWithRetry(long userId, int point);
+    public PointResponse chargePoint(long userId, int point);
 
 
     public boolean usePoint(long userId, int point);

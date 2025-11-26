@@ -5,15 +5,13 @@ import com.example.newecommerce.order.dto.PaymentRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @Tag(name = "구매", description = "구매 관련 기능")
 @RestController
+@RequestMapping(name = "/order")
 public class OrderController {
 
     public final OrderService orderService;
@@ -26,12 +24,9 @@ public class OrderController {
 
     //주문
     @Operation(summary = "구매/주문", description = "상품을 주문합니다")
-    @PostMapping("point/{id}/order")
+    @PostMapping("/{id}")
     public Long order(@PathVariable("id") Long userId,
                       @RequestBody Map<Long, Integer> productIdWithQuantity) {
-
-
-
 
 
 
@@ -43,7 +38,7 @@ public class OrderController {
 
     //지불- 포인트 사용
     @Operation(summary = "구매/결제", description = "주문한 상품을 결제합니다")
-    @PostMapping("point/{id}/payment")
+    @PostMapping("/{id}/payment")
     public boolean payment(@PathVariable("id") Long userId,
                            @RequestBody PaymentRequest paymentRequest) {
 
