@@ -34,12 +34,12 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
         return user.isEmpty()? null : user.get(0) ;
     }
 
+
     @Override
-    public Point updatePoint(long userId, int additionalPoints) {
+    public Point optimisticLockUpdatePoint(long userId, int additionalPoints) {
 
         List<Point> point = em.createQuery("select p from Point p join p.user u where u.userId = :userId", Point.class)
                                     .setParameter("userId", userId)
-                                    .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                                     .getResultList();
 
         //데이터가 없으면 새로 insert
@@ -57,7 +57,37 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
         point.get(0).setPoint(additionalPoints);
 
-        //return 1;
+
+        return point.isEmpty()? null : point.get(0);
+
+        //UPDATE point p JOIN user u ON p.userId = u.userId SET p.point = theFinalPoint WHERE u.userId = userId;
+
+    }
+
+    @Override
+    public Point PessimisticLockUpdatePoint(long userId, int additionalPoints) {
+
+        List<Point> point = em.createQuery("select p from Point p join p.user u where u.userId = :userId", Point.class)
+                .setParameter("userId", userId)
+                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
+                .getResultList();
+
+        //데이터가 없으면 새로 insert
+        if (point.isEmpty()) {
+            Point pointInfo = new Point();
+            User userRef = em.getReference(User.class, userId);
+
+            pointInfo.setUser(userRef);
+            pointInfo.setPoint(additionalPoints);
+
+            em.persist(pointInfo);
+
+            return pointInfo;
+        }
+
+        point.get(0).setPoint(additionalPoints);
+
+
         return point.isEmpty()? null : point.get(0);
 
         //UPDATE point p JOIN user u ON p.userId = u.userId SET p.point = theFinalPoint WHERE u.userId = userId;

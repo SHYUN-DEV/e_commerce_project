@@ -13,6 +13,8 @@ import com.example.newecommerce.user.dto.PointHistoryResponse;
 import com.example.newecommerce.user.dto.PointResponse;
 import com.example.newecommerce.user.dto.UserResponse;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockTimeoutException;
+import jakarta.persistence.PessimisticLockException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -54,7 +56,7 @@ public class UserServiceImpl implements UserService {
                 Long pointId = newPoint.getPointId();
 
                 int additionalPoints = newPoint.getPoint() + point;
-                Point updateResult  = userRepository.updatePoint(userId, additionalPoints);
+                Point updateResult  = userRepository.optimisticLockUpdatePoint(userId, additionalPoints);
                 userRepository.updatePointHistory(pointId, EnumPointStatus.CHARGED, point, additionalPoints);
 
                 //도메인 변환 dto로 변환
@@ -72,7 +74,7 @@ public class UserServiceImpl implements UserService {
                 Long pointId = user.getPoint().getPointId();
                 int additionalPoints = user.getPoint().getPoint() + point;
 
-                Point updateResult = userRepository.updatePoint(userId, additionalPoints);
+                Point updateResult = userRepository.optimisticLockUpdatePoint(userId, additionalPoints);
                 userRepository.updatePointHistory(pointId, EnumPointStatus.CHARGED, point, additionalPoints);
 
                 //도메인 변환 dto로 변환
@@ -107,16 +109,17 @@ public class UserServiceImpl implements UserService {
 
 
 
-    //@Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     @Override
     public boolean usePoint(long userId, int point) {
 
         try {
             User user = userRepository.findByUserId(userId);
+
             if (user != null) {
                 Long pointId = user.getPoint().getPointId();
                 int additionalPoints = user.getPoint().getPoint() - point;
-                userRepository.updatePoint(userId, additionalPoints);
+                userRepository.PessimisticLockUpdatePoint(userId, additionalPoints);
                 userRepository.updatePointHistory(pointId, EnumPointStatus.USED, point, additionalPoints);
             }else {
                 //throw new BusinessException(ErrorCode.USER_NOT_FOUND)
@@ -124,9 +127,9 @@ public class UserServiceImpl implements UserService {
             }
 
             return true;
-        }catch (ObjectOptimisticLockingFailureException e) {
+        }catch (PessimisticLockException | LockTimeoutException e) {
 
-            System.out.println("중복 사용 발생"+ e.getMessage());
+            System.out.println("락 경합 발생"+ e.getMessage());
             return false;
         }
 
