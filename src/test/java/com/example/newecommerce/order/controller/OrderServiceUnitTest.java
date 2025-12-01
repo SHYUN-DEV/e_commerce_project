@@ -6,8 +6,10 @@ import com.example.newecommerce.order.application.OrderServiceImpl;
 import com.example.newecommerce.order.domain.Order;
 import com.example.newecommerce.order.domain.OrderDetail;
 import com.example.newecommerce.order.domain.OrderRepository;
+import com.example.newecommerce.product.application.ProductService;
 import com.example.newecommerce.product.domain.Product;
 import com.example.newecommerce.product.domain.ProductRepository;
+import com.example.newecommerce.user.application.UserService;
 import com.example.newecommerce.user.domain.Point;
 import com.example.newecommerce.user.domain.User;
 import com.example.newecommerce.user.domain.UserRepository;
@@ -36,7 +38,6 @@ class OrderServiceUnitTest {
     /*
     실패 테스트 코드 - 예외 상황이아 실패상황이 올르바게 처리 되는 확인 하는 테스트 코드
 
-    재고 차감 부분 동시성제어 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
 
     주문
     실패 - 계정정보없음
@@ -57,12 +58,19 @@ class OrderServiceUnitTest {
     @Mock
     private ProductRepository productRepository;
 
+    @Mock
+    private ProductService productService;
+
+    @Mock
+    private UserService userService;
+
+
     @InjectMocks
     private OrderServiceImpl orderService;
 
 
 
-    @DisplayName("주문 - 실패 - 계정정보없음")
+    @DisplayName("주문 - 계정정보없음")
     @Test
     void orderFailNoMember() {
 
@@ -87,7 +95,7 @@ class OrderServiceUnitTest {
 
     }
 
-    @DisplayName("주문 - 실패 - 상품정보없음")
+    @DisplayName("주문 - 상품정보없음")
     @Test
     void orderFailNoProduct() {
 
@@ -122,7 +130,7 @@ class OrderServiceUnitTest {
 
 
 
-    @DisplayName("포인트 지불(사용) - 실패 - 계정정보 없음")
+    @DisplayName("결제 - 계정정보 없음")
     @Test
     void useTestFailNoMember() {
         // given
@@ -161,7 +169,7 @@ class OrderServiceUnitTest {
 
 
 
-    @DisplayName("포인트 지불(사용) - 실패 - 잔고없음")
+    @DisplayName("결제 - 잔고없음")
     @Test
     void useTestFailNoStock() {
         // given
@@ -210,20 +218,14 @@ class OrderServiceUnitTest {
         when(userRepository.findByUserId(userId)).thenReturn(user);
         //주문정보조회
         when(orderRepository.getOrderInfo(userId, orderId)).thenReturn(order);
+
         //상품 정보 조회
         when(productRepository.getProductInfo(1L)).thenReturn(product1);
         when(productRepository.getProductInfo(2L)).thenReturn(product2);
         when(productRepository.getProductInfo(3L)).thenReturn(product3);
 
-
-        //상품 정보 리스트 조회
-        when(productRepository.findAllById(productIdList)).thenReturn(productList);
-
-
-        //재고차감 업데이트
-        when(productRepository.decreaseInventory(anyLong(), anyInt()))
-                .thenAnswer(inv -> 1);
-
+        //재고차감
+        when(productService.productStockDeduct(order, productIdList)).thenReturn(true);
 
 
         // when
@@ -239,14 +241,14 @@ class OrderServiceUnitTest {
 
 
 
-    @DisplayName("포인트 지불(사용) - 실패 - 재고 없음")
+    @DisplayName("결제 - 재고 없음")
     @Test
     void useTestFailOutStock() {
 
         // given
         long userId = 99L;
         Long orderId = 1L;
-        int userPoints = 0;
+        int userPoints = 10000;
 
         List<Product> productList = new ArrayList<>();
         List<Long> productIdList = Arrays.asList(1L, 2L, 3L);
@@ -296,16 +298,12 @@ class OrderServiceUnitTest {
         when(productRepository.getProductInfo(2L)).thenReturn(product2);
         when(productRepository.getProductInfo(3L)).thenReturn(product3);
 
-
-        //상품 정보 리스트 조회
-        when(productRepository.findAllById(productIdList)).thenReturn(productList); // 재고
-
+        //재고차감
+        when(productService.productStockDeduct(order, productIdList))
+                .thenThrow(new BusinessException(ErrorCode.OUT_OF_STOCK));
 
 
         // when
-
-
-
         // then
         BusinessException exception =  assertThrows(BusinessException.class,
                 () -> orderService.paymentPoint(userId, orderId ,totalPayPoint));
@@ -313,7 +311,8 @@ class OrderServiceUnitTest {
         assertEquals(ErrorCode.OUT_OF_STOCK, exception.getErrorCode());
 
 
-        verify(productRepository, never()).save(any());
+        verify(userService, never()).usePoint(anyLong(), anyInt());
+
 
 
 

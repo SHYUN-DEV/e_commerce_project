@@ -190,8 +190,6 @@ public class OrderServiceImpl implements OrderService{
         int remainPoint = user.getPoint().getPoint() - totalPayPoint;
 
         if(remainPoint >= 0) {
-            /// ///////////////업데이트 수정 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //동시성제어 - 포인트차감 - 비관적 - 배타락
 
             userService.usePoint(userId, totalPayPoint);
 //            userRepository.updatePoint(userId, remainPoint);
