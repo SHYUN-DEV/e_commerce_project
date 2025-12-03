@@ -1,8 +1,6 @@
 # e_commerce_project
 
-
-  <img src="https://static.spartacodingclub.kr/hanghae99/plus/completion/badge_blue.svg" />
-</a>
+<a href="https://hhpluscertificateofcompletion.oopy.io/">
 
 
 
@@ -23,5 +21,8 @@
 8. [회고]()
 
 9. [트러블 슈팅]()
+
+
+
 
 
