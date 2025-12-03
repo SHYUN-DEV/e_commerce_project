@@ -1,6 +1,5 @@
 # e_commerce_project
 
-<a href="https://hhpluscertificateofcompletion.oopy.io/">
 
 
 
