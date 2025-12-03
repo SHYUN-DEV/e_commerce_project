@@ -17,9 +17,9 @@
 
 7. [동시성 문제](https://docs.google.com/spreadsheets/d/1nYC0oEB-8Cfezy9FAc1-W9L0ObWs1_SmjASPsBLhk24/edit#gid=794267824)
 
-8. [회고]()
+<!-- 8. [회고]()
 
-9. [트러블 슈팅]()
+9. [트러블 슈팅]() -->
 
 
 
