@@ -60,7 +60,7 @@ class UserServiceUnitTest {
 
 
 
-    @DisplayName("포인트 충전 - 실패 - 계정정보 없음") //실패 코드 - 예외가 발생하거나 실패 시나리오가 올바르게 처리가 되었는지
+    @DisplayName("포인트 충전 -  계정정보 없음") //실패 코드 - 예외가 발생하거나 실패 시나리오가 올바르게 처리가 되었는지
     @Test
     void chargeTestFailNoMember() {
         // given
@@ -80,7 +80,7 @@ class UserServiceUnitTest {
     };
 
 
-    @DisplayName("포인트 조회 - 실패 - 계정정보 없음") //실패 코드 - 예외가 발생하거나 실패 시나리오가 올바르게 처리가 되었는지
+    @DisplayName("포인트 조회 - 계정정보 없음") //실패 코드 - 예외가 발생하거나 실패 시나리오가 올바르게 처리가 되었는지
     @Test
     void pointInquiryTestFailNoMember() {
         // given
@@ -102,7 +102,7 @@ class UserServiceUnitTest {
     };
 
 
-    @DisplayName("포인트 내역 조회 - 실패 - 계정정보 없음") //실패 코드 - 예외가 발생하거나 실패 시나리오가 올바르게 처리가 되었는지
+    @DisplayName("포인트 내역 조회 - 계정정보 없음") //실패 코드 - 예외가 발생하거나 실패 시나리오가 올바르게 처리가 되었는지
     @Test
     void pointHistoryInquiryTestFailNoMember() {
         // given
