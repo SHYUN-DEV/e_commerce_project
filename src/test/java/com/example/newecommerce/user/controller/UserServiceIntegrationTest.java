@@ -24,9 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceIntegrationTest {
 
     private final UserRepository userRepository;
-    private final ProductRepository productRepository;
+//    private final ProductRepository productRepository;
     private final UserServiceImpl userService;
-    private final OrderService orderService;
+//    private final OrderService orderService;
 
 //    @Autowired
 //    private UserServiceImpl userServiceImpl;
@@ -36,14 +36,12 @@ public class UserServiceIntegrationTest {
 
     @Autowired
     public UserServiceIntegrationTest(UserRepository userRepository,
-                                      ProductRepository productRepository,
-                                      UserServiceImpl userService,
-                                      OrderService orderService) {
+                                     UserServiceImpl userService
+                                     ) {
 
         this.userRepository = userRepository;
-        this.productRepository = productRepository;
         this.userService = userService;
-        this.orderService = orderService;
+
     }
 
 
@@ -89,7 +87,7 @@ public class UserServiceIntegrationTest {
         User afterUpdateUser = userRepository.findByUserId(userId);
 
         assertEquals(afterUpdateUser.getPoint().getPoint(), first.getPoint());
-        assertEquals(null, second);
+        assertNull(second);
 
 
 
