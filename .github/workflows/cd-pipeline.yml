@@ -41,10 +41,14 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             set -euxo pipefail
+
             APP_DIR=/home/ubuntu/ecommerce
             PID_FILE=$APP_DIR/app.pid
 
             mkdir -p "$APP_DIR"
+
+            # 최신 jar 1개를 정확히 선택 (glob을 따옴표로 감싸지 않기!)
+            JAR_FILE=$(ls -1t $APP_DIR/newEcommerce-*.jar | head -n 1)
 
             # 기존 프로세스 종료 (있으면)
             if [ -f "$PID_FILE" ]; then
@@ -56,12 +60,12 @@ jobs:
             fi
 
             # 실행
-            nohup java -jar "$APP_DIR"/newEcommerce-*.jar --spring.profiles.active=prod > "$APP_DIR"/app.log 2>&1 &
+            nohup java -jar "$JAR_FILE" --spring.profiles.active=prod > "$APP_DIR/app.log" 2>&1 &
 
-            # PID 저장 (nohup으로 띄운 프로세스 PID)
+            # PID 저장
             echo $! > "$PID_FILE"
 
             sleep 2
 
-            # 정상 기동 확인
-            kill -0 "$(cat "$PID_FILE")" 2>/dev/null || (echo "App failed to start" && exit 1)
+            # 정상 기동 확인 + 실패 시 로그 출력
+            kill -0 "$(cat "$PID_FILE")" 2>/dev/null || (echo "App failed to start" && tail -n 120 "$APP_DIR/app.log" && exit 1)
