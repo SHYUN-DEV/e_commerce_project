@@ -18,6 +18,9 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
       - name: Build with Gradle
         run: ./gradlew clean build -x test   # 배포 때는 테스트 생략 가능
 
@@ -37,5 +40,9 @@ jobs:
           username: ${{ secrets.SERVER_USERNAME }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            set -euxo pipefail
+            mkdir -p /home/ubuntu/ecommerce
             pkill -f 'newEcommerce' || true
-            nohup java -jar /home/ubuntu/app/newEcommerce-*.jar --spring.profiles.active=prod > app.log 2>&1 &
+            nohup java -jar /home/ubuntu/ecommerce/newEcommerce-*.jar --spring.profiles.active=prod > /home/ubuntu/ecommerce/app.log 2>&1 &
+            sleep 2
+            pgrep -f 'newEcommerce' || (echo "App failed to start" && exit 1)
