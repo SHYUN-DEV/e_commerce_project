@@ -69,6 +69,7 @@ public class UserServiceImpl implements UserService {
 
 
                 return pointResponse;
+
             } else if (user != null && user.getPoint() != null) {
 
                 Long pointId = user.getPoint().getPointId();
@@ -90,8 +91,11 @@ public class UserServiceImpl implements UserService {
                 //else - 없으면 false 반환 혹은 계정없음 커스텀 에러발생
                 //throw new BusinessException(ErrorCode.USER_NOT_FOUND);
                 //빈값
-                PointResponse pointResponse = new PointResponse();
-                return pointResponse;
+//                PointResponse pointResponse = new PointResponse();
+//                return pointResponse;
+
+                throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+
             }
 
 

@@ -93,7 +93,7 @@ class UserServiceUnitTest {
         // when
         // then
         BusinessException exception = assertThrows(BusinessException.class,
-                                             () -> userService.PointInquiry(userId));
+                () -> userService.PointInquiry(userId));
 
         assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
         verify(userRepository).findByUserId(userId);// 조회 시도는 했는지 확인
@@ -113,7 +113,7 @@ class UserServiceUnitTest {
         // when
         // then
         BusinessException exception = assertThrows(BusinessException.class,
-                                        () -> userService.PointHistoryInquiry(userId));
+                () -> userService.PointHistoryInquiry(userId));
 
         assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
 
