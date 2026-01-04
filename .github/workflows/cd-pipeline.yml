@@ -48,7 +48,14 @@ jobs:
             mkdir -p "$APP_DIR"
 
             # 최신 jar 1개를 정확히 선택 (glob을 따옴표로 감싸지 않기!)
-            JAR_FILE=$(ls -1t $APP_DIR/newEcommerce-*.jar | head -n 1)
+            JAR_FILE=$(ls -1t "$APP_DIR"/build/libs/*.jar 2>/dev/null | head -n 1)
+
+            # jar가 없으면 exit1(실패)
+            if [ -z "${JAR_FILE:-}" ]; then
+              echo "No jar found in $APP_DIR/build/libs"
+              ls -al "$APP_DIR/build/libs" || true
+              exit 1
+            fi
 
             # 기존 프로세스 종료 (있으면)
             if [ -f "$PID_FILE" ]; then
